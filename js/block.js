@@ -1,4 +1,6 @@
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.blockchian = exports.Blockchain = exports.Block = void 0;
 const CryptoJS = require('crypto-js');
 const hexToBinary = require('hex-to-binary');
 // 定义区块Block
@@ -21,6 +23,7 @@ class Block {
         return Block.calculateHash(block.index, block.previousHash, block.timestamp, block.data, block.difficulty, block.nonce);
     }
 }
+exports.Block = Block;
 class Blockchain {
     constructor() {
         // 获取完整区块链
@@ -41,7 +44,9 @@ class Blockchain {
         this.addBlock = (newBlock) => {
             if (Blockchain.isValidNewBlock(newBlock, this.getLatestBlock())) {
                 this.chain.push(newBlock);
+                return true;
             }
+            return false;
         };
         /**
          * 选择生成代价最大的区块
@@ -199,4 +204,5 @@ class Blockchain {
         }
     }
 }
-module.exports = Blockchain;
+exports.Blockchain = Blockchain;
+exports.blockchian = new Blockchain();

@@ -1,12 +1,9 @@
 import { Request, Response } from "express";
+import express from 'express';
+import bodyParser from 'body-parser';
+import { blockchian, Block } from './block';
 
-const express = require('express');
-const bodyParser = require('body-parser');
-const Blockchain = require('./block');
-
-const blockchian = new Blockchain();
-
-class NodeServer {
+export class NodeServer {
   /**
    * 节点服务器可以实现一下基本功能：
    * 1. 获得完整区块链
@@ -37,5 +34,3 @@ class NodeServer {
     });
   }
 }
-
-module.exports = NodeServer;

@@ -1,9 +1,12 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-const express = require('express');
-const bodyParser = require('body-parser');
-const Blockchain = require('./block');
-const blockchian = new Blockchain();
+exports.NodeServer = void 0;
+const express_1 = __importDefault(require("express"));
+const body_parser_1 = __importDefault(require("body-parser"));
+const block_1 = require("./block");
 class NodeServer {
     /**
      * 节点服务器可以实现一下基本功能：
@@ -13,13 +16,13 @@ class NodeServer {
      * @param httpPort number
      */
     initHttpServer(httpPort) {
-        const app = express();
-        app.use(bodyParser.json());
+        const app = (0, express_1.default)();
+        app.use(body_parser_1.default.json());
         app.get('/blocks', (req, res) => {
-            res.send(blockchian.getBlockchain());
+            res.send(block_1.blockchian.getBlockchain());
         });
         app.get('/mineBlock', (req, res) => {
-            const newBlock = blockchian.generateNextBlock(req.body.data);
+            const newBlock = block_1.blockchian.generateNextBlock(req.body.data);
             res.send(newBlock);
         });
         app.get('/peers', (req, res) => {
@@ -33,4 +36,4 @@ class NodeServer {
         });
     }
 }
-module.exports = NodeServer;
+exports.NodeServer = NodeServer;

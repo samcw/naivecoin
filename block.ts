@@ -2,7 +2,7 @@ const CryptoJS = require('crypto-js');
 const hexToBinary = require('hex-to-binary');
 
 // 定义区块Block
-class Block {
+export class Block {
   public index: number;
   public hash: string;
   public previousHash: string | null;
@@ -56,7 +56,7 @@ class Block {
   }
 }
 
-class Blockchain {
+export class Blockchain {
   private chain: Block[];
 
   constructor() {
@@ -105,10 +105,12 @@ class Blockchain {
   };
 
   // 向区块链中添加区块
-  addBlock = (newBlock: Block): void => {
+  addBlock = (newBlock: Block): boolean => {
     if (Blockchain.isValidNewBlock(newBlock, this.getLatestBlock())) {
       this.chain.push(newBlock);
+      return true;
     }
+    return false;
   };
 
   /**
@@ -303,4 +305,4 @@ class Blockchain {
   }
 }
 
-module.exports = Blockchain;
+export const blockchian = new Blockchain();

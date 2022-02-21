@@ -1,4 +1,4 @@
-const NodeServer = require('./node');
+import { NodeServer } from './node';
 
 const nodeServer = new NodeServer();
 

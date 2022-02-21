@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import express from 'express';
 import bodyParser from 'body-parser';
 import { blockchian, Block } from './block';
+import { connectToPeers, getSocket, initP2PServer } from "./p2p";
 
 export class NodeServer {
   /**
@@ -14,18 +15,21 @@ export class NodeServer {
   initHttpServer(httpPort: number) {
     const app = express();
     app.use(bodyParser.json());
+    app.use(bodyParser.urlencoded({ extended: true }));
 
     app.get('/blocks', (req: Request, res: Response) => {
       res.send(blockchian.getBlockchain());
     });
-    app.get('/mineBlock', (req: Request, res: Response) => {
+    app.post('/mineBlock', (req: Request, res: Response) => {
+      console.log(req.body);
       const newBlock: Block = blockchian.generateNextBlock(req.body.data);
       res.send(newBlock);
     });
     app.get('/peers', (req: Request, res: Response) => {
-      res.send();
+      res.send(getSocket().map((s: any) => s._socket.remoteAddress + ':' + s._socket.remotePort));
     });
-    app.get('/addPeer', (req: Request, res: Response) => {
+    app.post('/addPeer', (req: Request, res: Response) => {
+      connectToPeers(req.body.peer);
       res.send();
     });
 

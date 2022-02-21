@@ -1,5 +1,15 @@
 "use strict";
+var _a, _b;
 Object.defineProperty(exports, "__esModule", { value: true });
 const node_1 = require("./node");
+const p2p_1 = require("./p2p");
+const commander_1 = require("commander");
+commander_1.program.option('-httpPort <port>').option('-p2pPort <port>');
+commander_1.program.parse();
+const options = commander_1.program.opts();
+console.log(options);
 const nodeServer = new node_1.NodeServer();
-nodeServer.initHttpServer(3000);
+const httpPort = (_a = parseInt(options.HttpPort)) !== null && _a !== void 0 ? _a : 3001;
+const p2pPort = (_b = parseInt(options.P2pPort)) !== null && _b !== void 0 ? _b : 6001;
+nodeServer.initHttpServer(httpPort);
+(0, p2p_1.initP2PServer)(p2pPort);

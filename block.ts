@@ -1,6 +1,8 @@
 const CryptoJS = require('crypto-js');
 const hexToBinary = require('hex-to-binary');
 
+import { boardcastLatest } from "./p2p";
+import { DIFFICULTY_ADJUSTMENT_INTERVAL, BLOCK_GENERATION_INTERVAL } from "./config";
 // 定义区块Block
 export class Block {
   public index: number;
@@ -66,11 +68,11 @@ export class Blockchain {
   createGenesisBlock(): Block {
     return new Block(
       0,
-      Block.calculateHash(0, null, 1645424669, 'My Genesis Block', 0, 0),
+      Block.calculateHash(1, null, 1645424669, 'My Genesis Block', 0, 0),
       null,
       1645424669,
       'My Genesis Block',
-      0,
+      10,
       0
     );
   }
@@ -89,7 +91,7 @@ export class Blockchain {
   generateNextBlock = (blockData: string): Block => {
     const previousBlock: Block = this.getLatestBlock();
     const nextIndex: number = previousBlock.index + 1;
-    const nextTimestamp: number = new Date().getTime() / 1000;
+    const nextTimestamp: number = parseInt(new Date().getTime() / 1000 + '');
     const difficulty: number = Blockchain.getDifficulty(this.chain);
 
     const newBlock: Block = Blockchain.findBlock(
@@ -100,7 +102,7 @@ export class Blockchain {
       difficulty
     );
     this.addBlock(newBlock);
-
+    boardcastLatest();
     return newBlock;
   };
 
@@ -129,7 +131,7 @@ export class Blockchain {
         'Received blockchain is valid. Replacing current blockchain with received blockchain'
       );
       this.chain = newBlocks;
-      // broadcastLatest();
+      boardcastLatest();
     } else {
       console.log('Received blockchain invalid');
     }
@@ -271,7 +273,7 @@ export class Blockchain {
     return hashInBinary.startsWith(requiredPrefix);
   }
 
-  // 模拟工作量证明
+  // 工作量证明
   static findBlock(
     index: number,
     previousHash: string,
@@ -279,6 +281,7 @@ export class Blockchain {
     data: string,
     difficulty: number
   ): Block {
+    console.log('finding block with index: ' + index);
     let nonce = 0;
     while (true) {
       const hash = Block.calculateHash(

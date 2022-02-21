@@ -3,6 +3,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.blockchian = exports.Blockchain = exports.Block = void 0;
 const CryptoJS = require('crypto-js');
 const hexToBinary = require('hex-to-binary');
+const p2p_1 = require("./p2p");
+const config_1 = require("./config");
 // 定义区块Block
 class Block {
     constructor(index, hash, previousHash, timestamp, data, difficulty, nonce) {
@@ -34,10 +36,11 @@ class Blockchain {
         this.generateNextBlock = (blockData) => {
             const previousBlock = this.getLatestBlock();
             const nextIndex = previousBlock.index + 1;
-            const nextTimestamp = new Date().getTime() / 1000;
+            const nextTimestamp = parseInt(new Date().getTime() / 1000 + '');
             const difficulty = Blockchain.getDifficulty(this.chain);
             const newBlock = Blockchain.findBlock(nextIndex, previousBlock.hash, nextTimestamp, blockData, difficulty);
             this.addBlock(newBlock);
+            (0, p2p_1.boardcastLatest)();
             return newBlock;
         };
         // 向区块链中添加区块
@@ -60,7 +63,7 @@ class Blockchain {
                     Blockchain.getAccumulatedDifficulty(this.chain)) {
                 console.log('Received blockchain is valid. Replacing current blockchain with received blockchain');
                 this.chain = newBlocks;
-                // broadcastLatest();
+                (0, p2p_1.boardcastLatest)();
             }
             else {
                 console.log('Received blockchain invalid');
@@ -69,7 +72,7 @@ class Blockchain {
         this.chain = [this.createGenesisBlock()];
     }
     createGenesisBlock() {
-        return new Block(0, Block.calculateHash(0, null, 1645424669, 'My Genesis Block', 0, 0), null, 1645424669, 'My Genesis Block', 0, 0);
+        return new Block(0, Block.calculateHash(1, null, 1645424669, 'My Genesis Block', 0, 0), null, 1645424669, 'My Genesis Block', 10, 0);
     }
     // 取得最新的区块
     getLatestBlock() {
@@ -160,9 +163,9 @@ class Blockchain {
     }
     // 获取调整后的难度
     static getAdjustedDifficulty(latestBlock, blockchain) {
-        const prevAdjustmentBlock = blockchain[blockchain.length - DIFFICULTY_ADJUSTMENT_INTERVAL];
+        const prevAdjustmentBlock = blockchain[blockchain.length - config_1.DIFFICULTY_ADJUSTMENT_INTERVAL];
         // 预期消耗时间
-        const timeExpected = BLOCK_GENERATION_INTERVAL * DIFFICULTY_ADJUSTMENT_INTERVAL;
+        const timeExpected = config_1.BLOCK_GENERATION_INTERVAL * config_1.DIFFICULTY_ADJUSTMENT_INTERVAL;
         // 实际消耗时间
         const timeTaken = latestBlock.timestamp - prevAdjustmentBlock.timestamp;
         if (timeTaken < timeExpected / 2) {
@@ -178,7 +181,7 @@ class Blockchain {
     // 获取难度参数
     static getDifficulty(blockchain) {
         const latestBlock = blockchain[blockchain.length - 1];
-        if (latestBlock.index % DIFFICULTY_ADJUSTMENT_INTERVAL === 0 &&
+        if (latestBlock.index % config_1.DIFFICULTY_ADJUSTMENT_INTERVAL === 0 &&
             latestBlock.index !== 0) {
             return Blockchain.getAdjustedDifficulty(latestBlock, blockchain);
         }
@@ -192,8 +195,9 @@ class Blockchain {
         const requiredPrefix = '0'.repeat(difficulty);
         return hashInBinary.startsWith(requiredPrefix);
     }
-    // 模拟工作量证明
+    // 工作量证明
     static findBlock(index, previousHash, timestamp, data, difficulty) {
+        console.log('finding block with index: ' + index);
         let nonce = 0;
         while (true) {
             const hash = Block.calculateHash(index, previousHash, timestamp, data, difficulty, nonce);

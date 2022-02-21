@@ -5,6 +5,7 @@ specifiers:
   '@types/node': ^17.0.18
   '@types/ws': ^8.2.3
   body-parser: ^1.19.2
+  commander: ^9.0.0
   crypto-js: ^4.1.1
   express: ^4.17.3
   hex-to-binary: ^1.0.1
@@ -13,6 +14,7 @@ specifiers:
 
 dependencies:
   body-parser: 1.19.2
+  commander: 9.0.0
   crypto-js: 4.1.1
   express: 4.17.3
   hex-to-binary: 1.0.1
@@ -116,6 +118,11 @@ packages:
   /bytes/3.1.2:
     resolution: {integrity: sha512-/Nf7TyzTx6S3yRJObOAV7956r8cr2+Oj8AC5dt8wSP3BQAoeX58NoHyCU8P8zGkNXStjTSi6fzO6F0pBdcYbEg==}
     engines: {node: '>= 0.8'}
+    dev: false
+
+  /commander/9.0.0:
+    resolution: {integrity: sha512-JJfP2saEKbQqvW+FI93OYUB4ByV5cizMpFMiiJI8xDbBvQvSkIk0VvQdn1CZ8mqAO8Loq2h0gYTYtDFUZUeERw==}
+    engines: {node: ^12.20.0 || >=14}
     dev: false
 
   /content-disposition/0.5.4:

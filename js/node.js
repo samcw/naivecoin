@@ -7,6 +7,7 @@ exports.NodeServer = void 0;
 const express_1 = __importDefault(require("express"));
 const body_parser_1 = __importDefault(require("body-parser"));
 const block_1 = require("./block");
+const p2p_1 = require("./p2p");
 class NodeServer {
     /**
      * 节点服务器可以实现一下基本功能：
@@ -18,17 +19,20 @@ class NodeServer {
     initHttpServer(httpPort) {
         const app = (0, express_1.default)();
         app.use(body_parser_1.default.json());
+        app.use(body_parser_1.default.urlencoded({ extended: true }));
         app.get('/blocks', (req, res) => {
             res.send(block_1.blockchian.getBlockchain());
         });
-        app.get('/mineBlock', (req, res) => {
+        app.post('/mineBlock', (req, res) => {
+            console.log(req.body);
             const newBlock = block_1.blockchian.generateNextBlock(req.body.data);
             res.send(newBlock);
         });
         app.get('/peers', (req, res) => {
-            res.send();
+            res.send((0, p2p_1.getSocket)().map((s) => s._socket.remoteAddress + ':' + s._socket.remotePort));
         });
-        app.get('/addPeer', (req, res) => {
+        app.post('/addPeer', (req, res) => {
+            (0, p2p_1.connectToPeers)(req.body.peer);
             res.send();
         });
         app.listen(httpPort, () => {

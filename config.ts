@@ -1,9 +1,9 @@
 // 多长时间可以产生一个区块
-const BLOCK_GENERATION_INTERVAL: number = 10;
+const BLOCK_GENERATION_INTERVAL: number = 100;
 // 难度调整的间隔
 const DIFFICULTY_ADJUSTMENT_INTERVAL: number = 10;
 
-module.exports = {
+export {
   BLOCK_GENERATION_INTERVAL,
   DIFFICULTY_ADJUSTMENT_INTERVAL
 }
